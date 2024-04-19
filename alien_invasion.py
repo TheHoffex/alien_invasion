@@ -34,13 +34,18 @@ class AlienInvasion:
         while True:
             self._check_events()
             self.ship.update()
-            self.bullets.update()
+            self._update_bullets()
             self._update_screen()
 
-            # entfernt verschwundene Geschosse
-            for bullet in self.bullets.copy():
-                if bullet.rect.bottom <= 0:
-                    self.bullets.remove(bullet)
+    def _update_bullets(self):
+        'update pos of bullets and get rid of old bullets'
+        # aktualisiere die pos
+        self.bullets.update()
+
+        # entfernt verschwundene Geschosse
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
 
     def _check_events(self):
         # lauscht tastatur und mausergebnisse
