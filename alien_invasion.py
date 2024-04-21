@@ -4,6 +4,7 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion:
 
@@ -25,6 +26,9 @@ class AlienInvasion:
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
+
+        self._create_fleet()
 
         # Hintergrundfarbe
         self.bg_color = self.settings.bg_color
@@ -46,6 +50,25 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
+
+    def _create_fleet(self):
+        'create fleet of aliens'
+        alien = Alien(self)
+        alien_width = alien.rect.width
+        available_space_x = self.settings.screen_width - (2 * alien_width)
+        number_aliens_x = available_space_x // (2 * alien_width)
+
+        # Erste Reihe von Invasionschiffen
+        for alien_number in range(number_aliens_x):
+            self._create_alien(alien_number)
+
+    def _create_alien(self, alien_number):
+        # Erstellt Invasionsschiff und platziert in der Reihe
+        alien = Alien(self)
+        alien_width = alien.rect.width
+        alien.x = alien_width + 2 * alien_width * alien_number
+        alien.rect.x = alien.x
+        self.aliens.add(alien)
 
     def _check_events(self):
         # lauscht tastatur und mausergebnisse
@@ -87,6 +110,7 @@ class AlienInvasion:
         self.ship.blitme()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
+        self.aliens.draw(self.screen)
 
         # macht zuletzt gezeichneten Bildschirm sichtbar
         pygame.display.flip()
